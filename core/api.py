@@ -36,5 +36,6 @@ def http_error_handler(request, exc: HttpError):
     )
 
 
-api.add_router("/pedidos/", "pedidos.api.produtos_api.router")
+api.add_router("/produtos/", "pedidos.api.produtos_api.router")
+api.add_router("/categorias/", "pedidos.api.categorias_api.router")
 # api.add_router("auth", "contas.api.router")
