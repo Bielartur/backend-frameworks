@@ -1,13 +1,8 @@
-from ninja import Schema
 from ninja.orm import ModelSchema
 from typing import Optional
 
+from ..schemas.categorias_schemas import CategoriaOut
 from ..models import Produto
-
-
-class CategoriaOut(Schema):
-    id: int
-    nome: str
 
 
 class ProdutoOut(ModelSchema):

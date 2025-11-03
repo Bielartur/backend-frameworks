@@ -3,6 +3,7 @@ from ninja.files import UploadedFile
 from typing import List, Optional
 from decimal import Decimal
 
+from core.api import ErrorSchema
 from ..models import Produto
 from ..schemas.produtos_schemas import ProdutoOut
 from pedidos.services import produtos_services as services
@@ -29,18 +30,18 @@ def criar_produto(
 def listar_produtos(request):
     produtos = Produto.objects.all()
 
-    return 200, [
+    return [
         services.criar_produto_response(request, p)
         for p in produtos
     ]
 
 
 @router.get("/{produto_id}", response=ProdutoOut)
-def produtos_detalhes(request, produto_id: int):
+def obter_produto(request, produto_id: int):
     produto = services.get_produto_by_id(produto_id)
     payload = services.criar_produto_response(request, produto)
 
-    return 200, payload
+    return payload
 
 
 @router.put("/{produto_id}", response=ProdutoOut)
@@ -57,10 +58,10 @@ def atualizar_produto(
     produto_atualizado = services.produto_update(produto, nome, preco, descricao, categoria_id, imagem)
     payload = services.criar_produto_response(request, produto_atualizado)
 
-    return 200, payload
+    return payload
 
 
-@router.delete('/{produto_id}')
+@router.delete('/{produto_id}', response={204: None, 404: ErrorSchema})
 def deletar_produto(request, produto_id: int):
     produto = services.get_produto_by_id(produto_id)
     produto.delete()
