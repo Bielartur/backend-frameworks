@@ -38,8 +38,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # App internos
     'contas',
     'pedidos',
+
+    # Ninja JWT
+    'ninja_jwt',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +137,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+NINJA_JWT = {
+    "ACCESS_TOKEN_LIFETIME": 60 * 60,        # 1h em segundos
+    "REFRESH_TOKEN_LIFETIME": 60 * 60 * 24,  # 1 dia
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,               # ou env dedicado
+    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.SlidingToken",),  # Configura para usar SlidingToken
+}
