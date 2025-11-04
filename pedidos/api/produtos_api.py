@@ -3,12 +3,12 @@ from ninja.files import UploadedFile
 from typing import List, Optional
 from decimal import Decimal
 
-from core.api import ErrorSchema
+from core.schemas import ErrorSchema
 from ..models import Produto
 from ..schemas.produtos_schemas import ProdutoOut
 from pedidos.services import produtos_services as services
 
-router = Router()
+router = Router(tags=["Produtos"])
 
 
 @router.post("/", response=ProdutoOut)

@@ -1,12 +1,12 @@
 from ninja import Router
 from typing import List, Optional
 
-from core.api import ErrorSchema
+from core.schemas import ErrorSchema
 from ..models import Categoria
 from ..schemas.categorias_schemas import CategoriaOut, CategoriaIn
 from pedidos.services import categorias_services as services
 
-router = Router()
+router = Router(tags=["Categorias"])
 
 
 @router.post("/", response=CategoriaOut)
