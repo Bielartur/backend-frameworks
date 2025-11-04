@@ -1,56 +1,43 @@
-# api.py
-from ninja import Router
-from ninja.errors import HttpError
-from ninja_jwt.tokens import SlidingToken
-from django.contrib.auth import get_user_model, authenticate
 from django.http import HttpRequest
+from ninja import Router
 
+from core.schemas import ErrorSchema
+from contas.services import auth_services as services
 from contas.schemas.auth_schema import SlidingOut, LoginIn, CadastrarIn
+from contas.services.auth_services import validar_email_disponivel
 
-User = get_user_model()
 auth_router = Router(tags=["Autenticação"])
 
 
-# LOGIN (Sliding) -> POST /api/autenticacao/login
-@auth_router.post("/login", response=SlidingOut)
-def login(request: HttpRequest, data: LoginIn):
+# LOGIN (Sliding) -> POST /autenticacao/login
+@auth_router.post("/login", response={200: SlidingOut, 401: ErrorSchema})
+def login(request: HttpRequest, payload: LoginIn):
     """
     Endpoint de login que autentica o usuário e retorna um sliding token.
     O usuário deve ser autenticado usando email e senha.
     """
-    # Autentica usando email (que é o USERNAME_FIELD do modelo Usuario)
-    user = authenticate(username=data.email, password=data.password)
-
-    if not user:
-        raise HttpError(401, "Usuário e/ou senha incorreto(s)")
+    usuario = services.autenticar_usuario(payload)
     
     # Gera o sliding token para o usuário autenticado
-    sliding_token = SlidingToken.for_user(user)
+    sliding_token = services.gerar_token(usuario)
     
     return SlidingOut(token=str(sliding_token))
 
 
-# CADASTRO (Sliding) -> POST /api/autenticacao/cadastro
-@auth_router.post("/cadastro", response=SlidingOut)
-def cadastro(request: HttpRequest, data: CadastrarIn):
+# CADASTRO (Sliding) -> POST /autenticacao/cadastro
+@auth_router.post("/cadastro", response={200: SlidingOut, 401: ErrorSchema})
+def cadastro(request: HttpRequest, payload: CadastrarIn):
     """
     Endpoint de cadastro que cria um novo usuário e retorna um sliding token.
     Se o email já existir, retorna um erro.
     """
-    # Verifica se o email já está cadastrado
-    if User.objects.filter(email=data.email).exists():
-        raise HttpError(400, "Este email já está cadastrado")
-    
-    # Cria o novo usuário
-    user = User.objects.create_user(
-        first_name=data.first_name,
-        last_name=data.last_name,
-        email=data.email,
-        password=data.password
-    )
+
+    # Verfica se o email já está associado à outra conta
+    validar_email_disponivel(payload.email)
+    usuario = services.usuario_save(payload)
     
     # Gera o sliding token para o novo usuário
-    sliding_token = SlidingToken.for_user(user)
+    sliding_token = services.gerar_token(usuario)
     
     return SlidingOut(token=str(sliding_token))
 
