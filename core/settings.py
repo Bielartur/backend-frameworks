@@ -17,7 +17,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,8 +26,12 @@ SECRET_KEY = "django-insecure-e_g6#ty6-t23634&283**)s&e70iq&)8x*xq-l$2p*x)w_30!*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Exemplo para um frontend React
+    "http://127.0.0.1:8000",
+]
 
 # Application definition
 
@@ -44,13 +47,15 @@ INSTALLED_APPS = [
     "pedidos.apps.PedidosConfig",
     'contas',
 
-    # Ninja JWT
+    # App externos
     'ninja_jwt',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -80,7 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -90,7 +94,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -110,8 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "contas.Usuario" 
-
+AUTH_USER_MODEL = "contas.Usuario"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -123,7 +125,6 @@ TIME_ZONE = "America/Recife"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -142,8 +143,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 NINJA_JWT = {
     "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.SlidingToken",),
 
-    "SLIDING_TOKEN_LIFETIME": timedelta(hours=1),          # janela "ativa" renovável
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),   # teto absoluto
+    "SLIDING_TOKEN_LIFETIME": timedelta(hours=1),  # janela "ativa" renovável
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),  # teto absoluto
 
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
