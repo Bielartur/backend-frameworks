@@ -1,7 +1,6 @@
 from ninja import Router
 from typing import List, Optional
 
-from core.schemas import ErrorSchema
 from ..models import Categoria
 from ..schemas.categorias_schemas import CategoriaOut, CategoriaIn
 from pedidos.services import categorias_services as services
@@ -45,7 +44,7 @@ def atualizar_categoria(
     return categoria_atualizada
 
 
-@router.delete("/{categoria_id}", response={204: None, 404: ErrorSchema})
+@router.delete("/{categoria_id}", response={204: None})
 def deletar_categoria(request, categoria_id: int):
     categoria = services.get_categoria_by_id(categoria_id)
     categoria.delete()

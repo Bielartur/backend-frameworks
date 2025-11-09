@@ -3,7 +3,6 @@ from ninja.files import UploadedFile
 from typing import List, Optional
 from decimal import Decimal
 
-from core.schemas import ErrorSchema
 from ..models import Produto
 from ..schemas.produtos_schemas import ProdutoOut
 from pedidos.services import produtos_services as services
@@ -61,7 +60,7 @@ def atualizar_produto(
     return payload
 
 
-@router.delete('/{produto_id}', response={204: None, 404: ErrorSchema})
+@router.delete('/{produto_id}', response={204: None})
 def deletar_produto(request, produto_id: int):
     produto = services.get_produto_by_id(produto_id)
     produto.delete()
