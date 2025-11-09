@@ -16,3 +16,7 @@ class LoginIn(Schema):
 
 class SlidingOut(Schema):
     token: str
+
+class AtualizarTokenOut(Schema):
+    detail: str
+    token: str

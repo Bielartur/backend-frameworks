@@ -1,10 +1,11 @@
 from django.http import HttpRequest
 from ninja import Router
+from ninja.errors import HttpError
 
+from core.auth import jwt_auth
 from core.schemas import ErrorSchema
 from contas.services import auth_services as services
 from contas.schemas.auth_schema import SlidingOut, LoginIn, CadastrarIn
-from contas.services.auth_services import validar_email_disponivel
 
 auth_router = Router(tags=["Autenticação"])
 
@@ -17,10 +18,10 @@ def login(request: HttpRequest, payload: LoginIn):
     O usuário deve ser autenticado usando email e senha.
     """
     usuario = services.autenticar_usuario(payload)
-    
+
     # Gera o sliding token para o usuário autenticado
     sliding_token = services.gerar_token(usuario)
-    
+
     return SlidingOut(token=str(sliding_token))
 
 
@@ -33,11 +34,21 @@ def cadastro(request: HttpRequest, payload: CadastrarIn):
     """
 
     # Verfica se o email já está associado à outra conta
-    validar_email_disponivel(payload.email)
+    services.validar_email_disponivel(payload.email)
     usuario = services.usuario_save(payload)
-    
+
     # Gera o sliding token para o novo usuário
     sliding_token = services.gerar_token(usuario)
-    
+
     return SlidingOut(token=str(sliding_token))
 
+
+@auth_router.post("/atualizar_token", response={200: SlidingOut, 401: ErrorSchema}, auth=jwt_auth)
+def atualizar_token(request):
+    token_str = request.headers.get("Authorization", "").replace("Bearer ", "")
+    novo_token = services.atualizar_token(token_str)
+    if novo_token:
+        request.token = novo_token
+        return {"detail": "Token atualizado com sucesso", "token": novo_token}
+    else:
+        raise HttpError(401, "Token inválido ou expirado")
