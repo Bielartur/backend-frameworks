@@ -13,7 +13,7 @@ def get_produto_by_id(produto_id) -> Produto | None:
     try:
         return Produto.objects.get(pk=produto_id)
     except Produto.DoesNotExist:
-        raise HttpError(404, f"Produto {produto_id} não encontrado")
+        raise HttpError(404, f"Produto de ID {produto_id} não encontrado")
 
 
 
