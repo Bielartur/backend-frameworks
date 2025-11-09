@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # App internos
+    "pedidos.apps.PedidosConfig",
     'contas',
-    'pedidos',
 
     # Ninja JWT
     'ninja_jwt',
@@ -139,9 +140,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 NINJA_JWT = {
-    "ACCESS_TOKEN_LIFETIME": 60 * 60,        # 1h em segundos
-    "REFRESH_TOKEN_LIFETIME": 60 * 60 * 24,  # 1 dia
+    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.SlidingToken",),
+
+    "SLIDING_TOKEN_LIFETIME": timedelta(hours=1),          # janela "ativa" renovável
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),   # teto absoluto
+
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,               # ou env dedicado
-    "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.SlidingToken",),  # Configura para usar SlidingToken
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+
+    # Opcional, ajuda contra drift de relógio
+    "LEEWAY": 30,
 }

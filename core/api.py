@@ -43,11 +43,13 @@ def _registrar_rotas():
 
     from pedidos.api.produtos_api import router as produtos_router
     from pedidos.api.categorias_api import router as categorias_router
+    from pedidos.api.pedidos_api import router as pedidos_router
     from contas.api.usuario_api import router as usuario_router
     from contas.api.auth_api import auth_router
 
     api.add_router("/produtos/", produtos_router, auth=jwt_auth)
     api.add_router("/categorias/", categorias_router, auth=jwt_auth)
+    api.add_router("/pedidos/", pedidos_router, auth=jwt_auth)
     api.add_router("/autenticacao/", auth_router)
     api.add_router("/usuario/", usuario_router)
 
