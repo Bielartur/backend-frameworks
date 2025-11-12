@@ -22,7 +22,7 @@ def login(request: HttpRequest, payload: LoginIn):
     # Gera o sliding token para o usuário autenticado
     sliding_token = services.gerar_token(usuario)
 
-    return SlidingOut(token=str(sliding_token))
+    return SlidingOut(token=str(sliding_token), usuario=usuario)
 
 
 # CADASTRO (Sliding) -> POST /autenticacao/cadastro
@@ -40,7 +40,7 @@ def cadastro(request: HttpRequest, payload: CadastrarIn):
     # Gera o sliding token para o novo usuário
     sliding_token = services.gerar_token(usuario)
 
-    return SlidingOut(token=str(sliding_token))
+    return SlidingOut(token=str(sliding_token), usuario=usuario)
 
 
 @auth_router.post("/atualizar_token", response={200: SlidingOut, 401: ErrorSchema}, auth=jwt_auth)

@@ -32,6 +32,8 @@ class Usuario(AbstractUser):
     """Modelo customizado de usuário que usa email como identificador principal."""
 
     username = None  # Remove o campo username
+    first_name = models.CharField(max_length=80, blank=False, null=False)
+    last_name = models.CharField(max_length=80, blank=True, null=True)
     email = models.EmailField(_("email address"), unique=True)
 
     USERNAME_FIELD = "email"

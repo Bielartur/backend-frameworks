@@ -56,6 +56,9 @@ def validar_email_disponivel(email: EmailStr) -> None:
 
 
 def usuario_save(payload: CadastrarIn) -> Usuario:
+    if not payload.password == payload.password_confirm:
+        raise HttpError(400, "As senhas não conferem. Tente novamente.")
+
     # Cria o novo usuário
     usuario = Usuario.objects.create_user(
         first_name=payload.first_name,
