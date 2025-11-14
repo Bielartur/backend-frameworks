@@ -52,7 +52,7 @@ def validar_email_disponivel(email: EmailStr) -> None:
     Lança HttpError(400) se o e-mail já estiver cadastrado.
     """
     if Usuario.objects.filter(email=email).exists():
-        raise HttpError(400, "Este e-mail já está cadastrado")
+        raise HttpError(409, "Este e-mail já está cadastrado")
 
 
 def usuario_save(payload: CadastrarIn) -> Usuario:

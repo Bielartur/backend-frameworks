@@ -13,8 +13,8 @@ def get_pedido_by_id(pedido_id) -> Pedido | None:
         raise HttpError(404, f"Pedido de ID {pedido_id} não encontrado")
 
 
-def listar_pedidos_pendentes():
-    return Pedido.objects.filter(status=Status.PENDENTE)
+def listar_pedidos():
+    return Pedido.objects.all()
 
 
 def _salvar_itens_pedido(
