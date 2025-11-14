@@ -23,7 +23,7 @@ def criar_pedido(request, payload: PedidoIn):
 
 @router.get('/', response=List[PedidoOut])
 def listar_pedidos(request):
-    return services.listar_pedidos_pendentes()
+    return services.listar_pedidos()
 
 
 @router.get("/{pedido_id}", response=PedidoOut)

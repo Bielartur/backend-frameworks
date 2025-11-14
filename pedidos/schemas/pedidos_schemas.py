@@ -1,20 +1,31 @@
 from ninja import Schema
 from decimal import Decimal
 from ninja.orm import ModelSchema
-from typing import List, Annotated
+from typing import List, Annotated, Optional
 from pydantic import Field, field_validator, computed_field
 from datetime import datetime
 from enum import Enum
 
+from core.utils.urls_utils import get_absolute_media_url
 from ..models import Pedido, Produto, ItensPedido
 
 QuantidadePositiva = Annotated[int, Field(gt=0)]
 
 
 class ProdutoOutResumido(ModelSchema):
+    imagem: Optional[str] = None
+
     class Meta:
         model = Produto
-        fields = ["id", "nome", "preco"]
+        fields = ["id", "nome", "preco", "imagem"]
+
+    @staticmethod
+    def resolve_imagem(produto, context):
+        request = context["request"]
+
+        if produto.imagem:
+            return get_absolute_media_url(request, produto.imagem.url)
+        return None
 
 
 class ItemPedidoOut(ModelSchema):
@@ -50,7 +61,7 @@ class PedidoOut(ModelSchema):
 
     class Meta:
         model = Pedido
-        fields = ["id", "usuario", "observacao", "status", "criado_em", "encerrado_em"]
+        fields = ["id", "usuario", "observacao", "total", "status", "criado_em", "encerrado_em"]
 
     # --- Itens ---
     @staticmethod
