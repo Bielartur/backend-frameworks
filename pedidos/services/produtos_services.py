@@ -61,24 +61,3 @@ def produto_update(
     produto.refresh_from_db()
 
     return produto
-
-
-def criar_produto_response(request, produto: Produto) -> ProdutoOut:
-
-    if produto.imagem:
-        imagem_url = get_absolute_media_url(request, getattr(produto.imagem, "url", None))
-    else:
-        imagem_url = None
-
-    # Monta o payload com as **mesmas chaves** do ProdutoSchema
-    payload = {
-        "id": produto.id,
-        "nome": produto.nome,
-        "preco": produto.preco,
-        "descricao": produto.descricao,
-        "categoria": produto.categoria,
-        "ativo": produto.ativo,
-        "imagem": imagem_url,
-    }
-    
-    return payload

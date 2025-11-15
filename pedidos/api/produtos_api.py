@@ -3,14 +3,15 @@ from ninja.files import UploadedFile
 from typing import List, Optional
 from decimal import Decimal
 
+from core.schemas import BaseResponse, ErrorSchema
 from ..models import Produto
-from ..schemas.produtos_schemas import ProdutoOut
+from ..schemas.produtos_schemas import ProdutoResponse, ProdutosResponse
 from pedidos.services import produtos_services as services
 
 router = Router(tags=["Produtos"])
 
 
-@router.post("/", response=ProdutoOut)
+@router.post("/", response=ProdutoResponse)
 def criar_produto(
     request,
     nome: str = Form(...),
@@ -20,30 +21,25 @@ def criar_produto(
     imagem: Optional[UploadedFile] = File(None),
 ):
     produto = services.produto_save(nome, preco, descricao, categoria_id, imagem)
-    payload = services.criar_produto_response(request, produto)
 
-    return payload
+    return {"message": "Produto criado com sucesso!", "data": produto}
 
 
-@router.get("/", response=List[ProdutoOut])
+@router.get("/", response=ProdutosResponse)
 def listar_produtos(request):
     produtos = Produto.objects.all()
 
-    return [
-        services.criar_produto_response(request, p)
-        for p in produtos
-    ]
+    return {"message": "Produtos encontrados com sucesso!", "data": produtos}
 
 
-@router.get("/{produto_id}", response=ProdutoOut)
+@router.get("/{produto_id}", response=ProdutoResponse)
 def obter_produto(request, produto_id: int):
     produto = services.get_produto_by_id(produto_id)
-    payload = services.criar_produto_response(request, produto)
 
-    return payload
+    return {"message": "Produto criado com sucesso!", "data": produto}
 
 
-@router.put("/{produto_id}", response=ProdutoOut)
+@router.put("/{produto_id}", response=ProdutoResponse)
 def atualizar_produto(
     request,
     produto_id: int,
@@ -54,15 +50,16 @@ def atualizar_produto(
     imagem: Optional[UploadedFile] = File(None),
 ):
     produto = services.get_produto_by_id(produto_id)
-    produto_atualizado = services.produto_update(produto, nome, preco, descricao, categoria_id, imagem)
-    payload = services.criar_produto_response(request, produto_atualizado)
+    produto_atualizado = services.produto_update(
+        produto, nome, preco, descricao, categoria_id, imagem
+    )
 
-    return payload
+    return {"message": "Produto  atualizado com sucesso!", "data": produto_atualizado}
 
 
-@router.delete('/{produto_id}', response={204: None})
+@router.delete("/{produto_id}", response={200: BaseResponse, 404: ErrorSchema})
 def deletar_produto(request, produto_id: int):
     produto = services.get_produto_by_id(produto_id)
     produto.delete()
 
-    return 204, None
+    return {"message": f"Produto '{str(produto)}' excluído com sucesso!", "data": None}
