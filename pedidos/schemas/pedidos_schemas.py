@@ -53,6 +53,7 @@ class PedidoIn(ModelSchema):
     class Meta:
         model = Pedido
         fields = ["observacao"]
+        fields_optional = ["observacao"]
 
 
 class PedidoOut(ModelSchema):

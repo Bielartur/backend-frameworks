@@ -9,3 +9,6 @@ def get_absolute_media_url(request: HttpRequest, relative_url: str | None) -> st
         return None
     domain = f"{request.scheme}://{request.get_host()}"
     return f"{domain}{relative_url}"
+
+# /media/cardapio/nome_do_produto
+# http://127.0.0.1:8000 + /media/cardapio/nome_do_produto
