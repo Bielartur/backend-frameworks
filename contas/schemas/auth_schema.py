@@ -2,6 +2,7 @@ from ninja import Schema
 from pydantic import EmailStr
 from typing import Optional
 
+
 class CadastrarIn(Schema):
     first_name: str
     last_name: Optional[str | None] = None
@@ -25,6 +26,12 @@ class UsuarioSchema(Schema):
 class SlidingOut(Schema):
     token: str
     usuario: UsuarioSchema
+
+
+class TokenResponse(Schema):
+    message: str
+    data: SlidingOut
+
 
 class AtualizarTokenOut(Schema):
     detail: str

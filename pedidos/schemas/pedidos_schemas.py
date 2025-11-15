@@ -4,7 +4,6 @@ from ninja.orm import ModelSchema
 from typing import List, Annotated, Optional
 from pydantic import Field, field_validator, computed_field
 from datetime import datetime
-from enum import Enum
 
 from core.utils.urls_utils import get_absolute_media_url
 from ..models import Pedido, Produto, ItensPedido
@@ -62,7 +61,15 @@ class PedidoOut(ModelSchema):
 
     class Meta:
         model = Pedido
-        fields = ["id", "usuario", "observacao", "total", "status", "criado_em", "encerrado_em"]
+        fields = [
+            "id",
+            "usuario",
+            "observacao",
+            "total",
+            "status",
+            "criado_em",
+            "encerrado_em",
+        ]
 
     # --- Itens ---
     @staticmethod
@@ -125,3 +132,12 @@ class PedidoUpdate(ModelSchema):
             except (ValueError, TypeError):
                 pass
         raise ValueError("Formato de data inválido. Use DD/MM/AAAA HH:MM.")
+
+
+class PedidoResponse(Schema):
+    message: str
+    data: PedidoOut
+
+class PedidosResponse(Schema):
+    message: str
+    data: List[PedidoOut]
