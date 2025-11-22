@@ -1,2 +1,2 @@
 # backend-frameworks
-Projeto Full Stack Django que administra pedidos de um restaurante.
+Projeto Backend Django que administra pedidos de um restaurante.
